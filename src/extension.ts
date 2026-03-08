@@ -11,7 +11,7 @@ import { Constants } from "./core/constants";
 import { configType } from "./core/types/config.type";
 import { VariableNameCase } from "./core/types/variable_name.type";
 import { readFile } from "./helpers/file.helper";
-import { findKeyByValue } from "./helpers/templete.helper";
+import { findKeyByValue } from "./helpers/template.helper";
 
 export function activate(context: vscode.ExtensionContext) {
   const generatekey = vscode.commands.registerCommand(
@@ -46,11 +46,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       const fileName = await getValueFromConfig(
-        configType.apiKeysFileName,
+        configType.apiKeysFileNameWithPath,
         configContent,
       );
-      const apiKeyTemplete = await getValueFromConfig(
-        configType.apiKeyTemplete,
+      const apiKeyTemplate = await getValueFromConfig(
+        configType.apiKeyTemplate,
         configContent,
       );
       const prefix = await getValueFromConfig(
@@ -68,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (
         !fileName ||
-        !apiKeyTemplete ||
+        !apiKeyTemplate ||
         !prefix ||
         !variableCase ||
         !apiClassName
@@ -80,7 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
         fileName,
         keys,
         VariableNameCase.from(variableCase) ?? VariableNameCase.CamelCase,
-        apiKeyTemplete,
+        apiKeyTemplate,
         apiClassName,
       );
     },
@@ -109,12 +109,14 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const fileName = await getValueFromConfig(configType.apiKeysFileName);
-      const apiKeysTemplete = await getValueFromConfig(
-        configType.apiKeyTemplete,
+      const fileName = await getValueFromConfig(
+        configType.apiKeysFileNameWithPath,
+      );
+      const apiKeysTemplate = await getValueFromConfig(
+        configType.apiKeyTemplate,
       );
 
-      if (!fileName || !apiKeysTemplete) {
+      if (!fileName || !apiKeysTemplate) {
         return;
       }
 
@@ -124,7 +126,7 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const variable = findKeyByValue(content, keys[0].key, apiKeysTemplete);
+      const variable = findKeyByValue(content, keys[0].key, apiKeysTemplate);
 
       if (variable) {
         await vscode.env.clipboard.writeText(variable);
@@ -148,11 +150,11 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       const fileName = await getValueFromConfig(
-        configType.apiKeysFileName,
+        configType.apiKeysFileNameWithPath,
         configContent,
       );
-      const apiKeyTemplete = await getValueFromConfig(
-        configType.apiKeyTemplete,
+      const apiKeyTemplate = await getValueFromConfig(
+        configType.apiKeyTemplate,
         configContent,
       );
       const prefix = await getValueFromConfig(
@@ -170,7 +172,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (
         !fileName ||
-        !apiKeyTemplete ||
+        !apiKeyTemplate ||
         !prefix ||
         !variableCase ||
         !apiClassName
@@ -205,20 +207,19 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         }
 
-        let variable = findKeyByValue(content, key.key, apiKeyTemplete);
+        let variable = findKeyByValue(content, key.key, apiKeyTemplate);
 
         if (!variable) {
-         const updatedContent =  await writeEngine(
+          const updatedContent = await writeEngine(
             fileName,
             [key.key],
             VariableNameCase.from(variableCase) ?? VariableNameCase.CamelCase,
-            apiKeyTemplete,
+            apiKeyTemplate,
             apiClassName,
           );
-          
 
           content = updatedContent ?? (await readFile(fileName)) ?? "";
-          variable = findKeyByValue(content, key.key, apiKeyTemplete);
+          variable = findKeyByValue(content, key.key, apiKeyTemplate);
           console.log("Content" + content);
           console.log("Variable: " + variable);
         }

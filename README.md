@@ -1,71 +1,309 @@
-# key-generator README
+# Key Generator
 
-This is the README for your extension "key-generator". After writing up a brief description, we recommend including the following sections.
+**Key Generator** is a Visual Studio Code extension that helps developers quickly generate API or localization keys from selected text and automatically replace the selected values with strongly-typed variables.
 
-## Features
+It removes the repetitive work of manually creating key constants and replacing values across your codebase.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+This extension is especially useful for projects that use centralized key files, such as **localization systems or API constant files**.
 
 ---
 
-## Following extension guidelines
+# Features
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+## 1. Generate Keys
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+Generate key variables from selected text.
 
-## Working with Markdown
+**Command**
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+```
+ApDev: Generate Key
+```
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+**What it does**
 
-## For more information
+- Extracts keys from the selected text
+- Generates variables inside the configured key file
+- Keeps your key file automatically updated
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+**Example**
 
-**Enjoy!**
+Input
+
+```dart
+"user_login"
+"user_logout"
+```
+
+Generated in `api_keys.dart`
+
+```dart
+class ApiKeys {
+  static const userLogin = "user_login";
+  static const userLogout = "user_logout";
+}
+```
+
+---
+
+## 2. Copy Key Variable
+
+Quickly copy the variable name for an existing key.
+
+**Command**
+
+```
+ApDev: Copy Key
+```
+
+**What it does**
+
+- Finds the variable associated with the selected key
+- Copies the variable name to the clipboard
+
+**Example**
+
+If the key file contains
+
+```dart
+static const userLogin = "user_login";
+```
+
+Selecting
+
+```
+"user_login"
+```
+
+Copies
+
+```
+userLogin
+```
+
+to your clipboard.
+
+---
+
+## 3. Generate and Replace
+
+Generate keys and automatically replace the selected text with the variable reference.
+
+
+**Command**
+
+```
+ApDev: Generate and Replace
+```
+
+**What it does**
+
+- Extracts keys from the selected text
+- Generates missing variables inside the key file
+- Replaces the selected text with the generated variable reference
+
+**Example**
+
+### Before
+
+```dart
+"user_login"
+"user_logout"
+"profile_update"
+```
+
+### Generated Key File
+
+```dart
+class ApiKeys {
+  static const userLogin = "user_login";
+  static const userLogout = "user_logout";
+  static const profileUpdate = "profile_update";
+}
+```
+
+### After Replacement
+
+```dart
+ApiKeys.userLogin
+ApiKeys.userLogout
+ApiKeys.profileUpdate
+```
+
+---
+
+# Supported Input Formats
+
+The extension can extract keys from multiple formats.
+
+### Plain Text
+
+```
+user_login
+```
+
+### Quoted Text
+
+```
+"user_login"
+```
+
+### JSON Keys
+
+```json
+"user_login": "Login"
+```
+
+---
+
+# Requirements
+
+This extension requires:
+
+- **Visual Studio Code 1.80+**
+- A configured **key configuration file**
+
+The extension reads configuration from a file where you define:
+
+- the key file name
+- template format
+- variable naming style
+- class name
+- prefix used in replacement
+
+---
+
+# Extension Settings
+
+This extension reads configuration values used to generate keys.
+
+### Example Configuration
+
+```json
+{
+  "apiKeysFileNameWithPath": "api_keys.dart",
+  "apiKeyTemplate": "static const <KEY> = "<VALUE>";",
+  "prefixedVariableName": "ApiKeys.",
+  "variableCase": "camelCase",
+  "apiClassName": "ApiKeys"
+}
+```
+
+---
+
+# Settings Explained
+
+| Setting                 | Description                                 |
+| ----------------------- | ------------------------------------------- |
+| apiKeysFileNameWithPath | File where generated keys will be stored    |
+| apiKeyTemplate          | Template used to generate variables         |
+| prefixedVariableName    | Prefix used when replacing selected text    |
+| variableCase            | Naming style for variables                  |
+| apiClassName            | Class where generated keys will be inserted |
+
+---
+
+# Usage
+
+## Step 1
+
+Select text in your file.
+
+Example:
+
+```dart
+"user_login"
+"user_logout"
+```
+
+---
+
+## Step 2
+
+Open the command palette:
+
+```
+Cmd + Shift + P
+```
+
+Run:
+
+```
+Key Generator
+```
+or
+```
+ApDev: Copy Key
+```
+or
+```
+ApDev: Generate and Replace
+```
+
+
+---
+
+# Known Issues
+1. Currently **Generate and Replace** only supports Quoted texts only
+
+2. The extension assumes the key file contains a **single class structure**. If multiple classes exist in the file, insertion may occur in the wrong location.
+
+Future versions will include **smarter class detection and parsing**.
+
+---
+
+# Release Notes
+
+## 1.0.0
+
+Initial release
+
+Features:
+
+- Key extraction from selected text
+- Automatic key generation
+- Automatic replacement of selected text
+- Support for JSON keys and quoted strings
+
+---
+
+# Contributing
+
+Contributions are welcome!
+
+If you'd like to improve the extension:
+
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
+
+---
+
+# Development
+
+To run the extension locally:
+
+```bash
+npm install
+npm run compile
+```
+
+Then press:
+
+```
+F5
+```
+
+This will open the **Extension Development Host** where you can test the extension.
+
+---
+
+# License
+
+MIT License
+
+---
+
+# Author
+
+Created by **Aman Mahavar**

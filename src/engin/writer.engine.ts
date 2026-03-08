@@ -5,7 +5,7 @@ import { readFile, writeToFile } from "../helpers/file.helper";
 import {
   isValueExist,
   replaceTemplateWithActualValue,
-} from "../helpers/templete.helper";
+} from "../helpers/template.helper";
 import { isClassExist } from "../helpers/class.helper";
 
 export async function writeEngine(
@@ -28,8 +28,7 @@ export async function writeEngine(
           variableCase ?? VariableNameCase.CamelCase,
         );
 
-         return replaceTemplateWithActualValue(template, [name, key]);
-         
+        return replaceTemplateWithActualValue(template, [name, key]);
       }
     })
     .filter(Boolean)
@@ -61,5 +60,4 @@ export async function writeEngine(
 
   await writeToFile(fileName, updatedContent);
   return updatedContent;
-
 }

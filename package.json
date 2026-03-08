@@ -2,7 +2,13 @@
   "name": "key-generator",
   "displayName": "key-generator",
   "description": "Automatic key generator",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "license": "MIT",
+  "publisher": "aman-mahavar",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apthedeveloper/key-generator.git"
+  },
   "engines": {
     "vscode": "^1.109.0"
   },
@@ -27,6 +33,26 @@
       }
     ]
   },
+  "keybindings": [
+    {
+      "command": "key-generator.generateKey",
+      "key": "ctrl+alt+g",
+      "mac": "cmd+alt+g",
+      "when": "editorTextFocus"
+    },
+    {
+      "command": "key-generator.copyKey",
+      "key": "ctrl+alt+c",
+      "mac": "cmd+alt+c",
+      "when": "editorTextFocus"
+    },
+    {
+      "command": "key-generator.generateAndReplace",
+      "key": "ctrl+alt+r",
+      "mac": "cmd+alt+r",
+      "when": "editorTextFocus"
+    }
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
