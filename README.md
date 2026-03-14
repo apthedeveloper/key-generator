@@ -1,119 +1,34 @@
 # Key Generator
 
-**Key Generator** is a Visual Studio Code extension that helps developers quickly generate API or localization keys from selected text and automatically replace the selected values with strongly-typed variables.
+A Visual Studio Code extension that generates strongly-typed API or localization key constants from selected text, and optionally replaces those strings with the generated variable references.
 
-It removes the repetitive work of manually creating key constants and replacing values across your codebase.
-
-This extension is especially useful for projects that use centralized key files, such as **localization systems or API constant files**.
+Ideal for projects that use centralized key files such as localization systems or API constant files.
 
 ---
 
-# Features
+## Features
 
-## 1. Generate Keys
+### `ApDev: Generate Key`
+Extracts keys from selected text and appends the generated variables to your configured key file.
 
-Generate key variables from selected text.
+### `ApDev: Copy Key`
+Finds the variable associated with a selected key string and copies the variable name to your clipboard.
 
-**Command**
-
-```
-ApDev: Generate Key
-```
-
-**What it does**
-
-- Extracts keys from the selected text
-- Generates variables inside the configured key file
-- Keeps your key file automatically updated
-
-**Example**
-
-Input
-
-```dart
-"user_login"
-"user_logout"
-```
-
-Generated in `api_keys.dart`
-
-```dart
-class ApiKeys {
-  static const userLogin = "user_login";
-  static const userLogout = "user_logout";
-}
-```
+### `ApDev: Generate and Replace`
+Generates missing variables in the key file **and** replaces the selected strings with their typed variable references in one step.
 
 ---
 
-## 2. Copy Key Variable
+## Demo
 
-Quickly copy the variable name for an existing key.
-
-**Command**
-
+**Input** (selected text in your file):
 ```
-ApDev: Copy Key
-```
-
-**What it does**
-
-- Finds the variable associated with the selected key
-- Copies the variable name to the clipboard
-
-**Example**
-
-If the key file contains
-
-```dart
-static const userLogin = "user_login";
-```
-
-Selecting
-
-```
-"user_login"
-```
-
-Copies
-
-```
-userLogin
-```
-
-to your clipboard.
-
----
-
-## 3. Generate and Replace
-
-Generate keys and automatically replace the selected text with the variable reference.
-
-
-**Command**
-
-```
-ApDev: Generate and Replace
-```
-
-**What it does**
-
-- Extracts keys from the selected text
-- Generates missing variables inside the key file
-- Replaces the selected text with the generated variable reference
-
-**Example**
-
-### Before
-
-```dart
 "user_login"
 "user_logout"
 "profile_update"
 ```
 
-### Generated Key File
-
+**Generated** in `api_keys.dart`:
 ```dart
 class ApiKeys {
   static const userLogin = "user_login";
@@ -122,8 +37,7 @@ class ApiKeys {
 }
 ```
 
-### After Replacement
-
+**After replacement** (in your source file):
 ```dart
 ApiKeys.userLogin
 ApiKeys.userLogout
@@ -132,146 +46,102 @@ ApiKeys.profileUpdate
 
 ---
 
-# Supported Input Formats
+## Supported Input Formats
 
-The extension can extract keys from multiple formats.
-
-### Plain Text
-
-```
-user_login
-```
-
-### Quoted Text
-
-```
-"user_login"
-```
-
-### JSON Keys
-
-```json
-"user_login": "Login"
-```
+| Format | Example |
+|--------|---------|
+| Plain text | `user_login` |
+| Quoted string | `"user_login"` |
+| JSON key | `"user_login": "Login"` |
 
 ---
 
-# Requirements
+## Requirements
 
-This extension requires:
-
-- **Visual Studio Code 1.80+**
-- A configured **key configuration file**
-
-The extension reads configuration from a file where you define:
-
-- the key file name
-- template format
-- variable naming style
-- class name
-- prefix used in replacement
+- Visual Studio Code **1.80+**
+- A configured key file (see [Configuration](#configuration))
 
 ---
 
-# Extension Settings
+## Configuration
 
-This extension reads configuration values used to generate keys.
-
-### Example Configuration
+Create a config file in your project with the following options:
 
 ```json
 {
   "apiKeysFileNameWithPath": "api_keys.dart",
-  "apiKeyTemplate": "static const <KEY> = "<VALUE>";",
+  "apiKeyTemplate": "static const <KEY> = <VALUE>;",
   "prefixedVariableName": "ApiKeys.",
   "variableCase": "camelCase",
   "apiClassName": "ApiKeys"
 }
 ```
 
----
-
-# Settings Explained
-
-| Setting                 | Description                                 |
-| ----------------------- | ------------------------------------------- |
-| apiKeysFileNameWithPath | File where generated keys will be stored    |
-| apiKeyTemplate          | Template used to generate variables         |
-| prefixedVariableName    | Prefix used when replacing selected text    |
-| variableCase            | Naming style for variables                  |
-| apiClassName            | Class where generated keys will be inserted |
+| Setting | Description |
+|---------|-------------|
+| `apiKeysFileNameWithPath` | Path to the file where generated keys are stored |
+| `apiKeyTemplate` | Template for each variable. Use `<KEY>` and `<VALUE>` as placeholders |
+| `prefixedVariableName` | Prefix used when replacing selected text (e.g. `ApiKeys.`) |
+| `variableCase` | Naming convention for generated variables |
+| `apiClassName` | Class name where keys will be inserted |
 
 ---
 
-# Usage
+## Variable Naming Conventions
 
-## Step 1
+Configure `variableCase` to match your project's code style:
 
-Select text in your file.
-
-Example:
-
-```dart
-"user_login"
-"user_logout"
-```
-
----
-
-## Step 2
-
-Open the command palette:
-
-```
-Cmd + Shift + P
-```
-
-Run:
-
-```
-Key Generator
-```
-or
-```
-ApDev: Copy Key
-```
-or
-```
-ApDev: Generate and Replace
-```
-
+| `variableCase` value | Output for `user_login` |
+|----------------------|-------------------------|
+| `camelCase` | `userLogin` |
+| `PascalCase` | `UserLogin` |
+| `snake_case` | `user_login` |
+| `UPPER_SNAKE_CASE` | `USER_LOGIN` |
+| `kebab-case` | `user-login` |
+| `train-case` | `User-Login` |
+| `Title Case` | `User Login` |
 
 ---
 
-# Known Issues
-1. Currently **Generate and Replace** only supports Quoted texts only
+## Usage
 
-2. The extension assumes the key file contains a **single class structure**. If multiple classes exist in the file, insertion may occur in the wrong location.
-
-Future versions will include **smarter class detection and parsing**.
-
----
-
-# Release Notes
-
-## 1.0.0
-
-Initial release
-
-Features:
-
-- Key extraction from selected text
-- Automatic key generation
-- Automatic replacement of selected text
-- Support for JSON keys and quoted strings
+1. Select the key strings in your file
+2. Open the command palette: `Cmd + Shift + P` (Mac) / `Ctrl + Shift + P` (Windows/Linux)
+3. Run one of:
+   - `ApDev: Generate Key` — generate variables only
+   - `ApDev: Copy Key` — copy existing variable name
+   - `ApDev: Generate and Replace` — generate and replace in one step
 
 ---
 
-# Contributing
+## Known Issues
+
+- **Generate and Replace** currently supports quoted text only. Plain text and JSON formats are not yet supported for in-place replacement.
+- The extension assumes a **single class structure** in the key file. If multiple classes exist, insertion may occur in the wrong location. Smarter class detection is planned for a future release.
+
+---
+
+## Release Notes
+
+### 1.0.0
+Initial release — key extraction, automatic generation, text replacement, JSON key support, and quoted string support.
+
+---
+
+## Development
+
+```bash
+npm install
+npm run compile
+```
+
+Press `F5` to open the Extension Development Host and test the extension.
+
+---
+
+## Contributing
 
 Contributions are welcome!
-
-If you'd like to improve the extension:
 
 1. Fork the repository
 2. Create a feature branch
@@ -279,31 +149,12 @@ If you'd like to improve the extension:
 
 ---
 
-# Development
+## License
 
-To run the extension locally:
-
-```bash
-npm install
-npm run compile
-```
-
-Then press:
-
-```
-F5
-```
-
-This will open the **Extension Development Host** where you can test the extension.
+[MIT](LICENSE)
 
 ---
 
-# License
-
-MIT License
-
----
-
-# Author
+## Author
 
 Created by **Aman Mahavar**

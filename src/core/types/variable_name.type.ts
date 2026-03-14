@@ -3,7 +3,9 @@ export enum VariableNameCase {
   PascalCase = "PascalCase",
   SnakeCase = "snake_case",
   UpperSnakeCase = "UPPER_SNAKE_CASE",
-  
+  KebabCase = "kebab-case",
+  TrainCase = "train-case",
+  TitleCase = "Title Case",
 }
 
 export namespace VariableNameCase {
@@ -12,6 +14,9 @@ export namespace VariableNameCase {
     VariableNameCase.PascalCase,
     VariableNameCase.SnakeCase,
     VariableNameCase.UpperSnakeCase,
+    VariableNameCase.KebabCase,
+    VariableNameCase.TrainCase,
+    VariableNameCase.TitleCase
   ];
 
   export function from(value: string): VariableNameCase {

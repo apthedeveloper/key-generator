@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import { VariableNameCase } from "../core/types/variable_name.type";
 import { getVariableNameFromValue } from "../helpers/variable_name.helper";
 import { readFile, writeToFile } from "../helpers/file.helper";

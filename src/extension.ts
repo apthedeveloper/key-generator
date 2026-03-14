@@ -28,11 +28,17 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const keys = (
-        await Promise.all(selectedTexts.map((t) => selectedTextParse(t.trim())))
+      const keys = [
+  ...new Set(
+    (
+      await Promise.all(
+        selectedTexts.map((t) => selectedTextParse(t.trim()))
       )
-        .flat()
-        .map((k) => k.key);
+    )
+      .flat()
+      .map((k) => k.key)
+  ),
+];
 
       if (keys.length == 0) {
         vscode.window.showErrorMessage("No keys found OR Invalid keys");
@@ -100,9 +106,13 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const keys = await selectedTextParse(selectedTexts[0].trim(), [
-        ParserMatchType.singleText,
-      ]);
+     const keys = [
+  ...new Set(
+    await selectedTextParse(selectedTexts[0].trim(), [
+      ParserMatchType.singleText,
+    ])
+  ),
+];
 
       if (keys.length == 0) {
         vscode.window.showErrorMessage("No keys found OR Invalid keys");
@@ -183,13 +193,17 @@ export function activate(context: vscode.ExtensionContext) {
       const selectedTexts = await getSelectedText(editor);
       if (!selectedTexts) return;
 
-      const keys = (
-        await Promise.all(
-          selectedTexts.map((t) =>
-            selectedTextParse(t.trim(), [ParserMatchType.singleText]),
-          ),
-        )
-      ).flat();
+     const keys = [
+  ...new Set(
+    (
+      await Promise.all(
+        selectedTexts.map((t) =>
+          selectedTextParse(t.trim(), [ParserMatchType.singleText]),
+        ),
+      )
+    ).flat()
+  ),
+];
 
       if (keys.length === 0) {
         vscode.window.showErrorMessage("No keys found OR Invalid keys");
